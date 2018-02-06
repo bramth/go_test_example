@@ -1,8 +1,6 @@
 package user
 
-i
-
-mport (
+import (
 	"testing"
 )
 
