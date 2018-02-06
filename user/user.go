@@ -58,3 +58,8 @@ func GetUserByEmail(email string) (*User, error) {
 
 	return user, nil
 }
+
+
+func DeleteUser(id int64) error {
+	query := `DELETE FROM trainin`
+}a
