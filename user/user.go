@@ -27,34 +27,47 @@ type User struct {
 
 // GetUserByID selects user by id
 func GetUserByID(id int64) (*User, error) {
-	query := `SELECT id, name, email, phone FROM training_user WHERE user_id = $1`
+	query := `SELECT id, name, email, phone FROM training_user WHERE id = $1`
 
-	var user *User
+	var user User
 
-	err := db.Get(user, query, id)
+	err := db.Get(&user, query, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 // InsertUser insert new user
-func InsertUser(user User) (id *int64, err error) {
-	query := `INSERT INTO(name, email, phone) VALUES($1, $2, $3) RETURNING id`
-	err = db.QueryRow(query, user.Name, user.Email, user.Phone).Scan(id)
-	return
+func InsertUser(user User) (*int64, error) {
+	query := `INSERT INTO training_user(name, email, phone) VALUES($1, $2, $3) RETURNING id`
+	var id int64
+	err := db.QueryRow(query, user.Name, user.Email, user.Phone).Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &id, nil
 }
 
 // GetUserByEmail return user by email
 func GetUserByEmail(email string) (*User, error) {
 	query := `SELECT id, name, email, phone FROM training_user WHERE LOWER(email) = LOWER($1)`
 
-	var user *User
-	err := db.Get(user, query, email)
+	var user User
+	err := db.Get(&user, query, email)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
+}
+
+// DeleteUser will delete user by ID
+func DeleteUser(id int64) error {
+	query := `DELETE FROM training_user WHERE id = $1`
+
+	_, err := db.Exec(query, id)
+	return err
 }
