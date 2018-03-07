@@ -9,7 +9,7 @@ const connectionDB = "user=postgres password=postgres dbname=se_training host=12
 
 var db *sqlx.DB
 
-func init() {
+func Init() {
 	var err error
 	db, err = sqlx.Connect("postgres", connectionDB)
 	if err != nil {

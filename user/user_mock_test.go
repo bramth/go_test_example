@@ -2,9 +2,10 @@ package user
 
 import (
 	"database/sql"
+	"os"
+	"testing"
 
 	"github.com/jmoiron/sqlx"
-
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
@@ -19,27 +20,38 @@ func InitMock() {
 	}
 
 	db = sqlx.NewDb(dbx, "postgres")
-
 }
 
-// func TestGetUserMock(t *testing.T) {
-// 	InitMock()
-// 	userID := int64(20)
+func TestMain(m *testing.M) {
+	InitMock()
+	os.Exit(m.Run())
+}
 
-// 	rows := sqlmock.NewRows([]string{"id", "name", "email", "phone"})
-// 	rows.AddRow(20, "User Test Mock", "user.mock@gmail.com", "+72303838388383")
+func TestGetUserMock(t *testing.T) {
 
-// 	mock.ExpectQuery("SELECT id, name, email, phone FROM training_user").WithArgs(userID).WillReturnRows(rows)
+	userID := int64(21)
 
-// 	user, err := GetUserByID(userID)
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
+	rows := sqlmock.NewRows([]string{"id", "name", "email", "phone"})
+	rows.AddRow(20, "User Test Mock", "user.mock@gmail.com", "+72303838388383")
 
-// 	if user.Email != "user.mock@gmail.com" {
-// 		t.Errorf("Test failed expect email %s but got %s", "user.mock@gmail.com", user.Email)
-// 	}
+	mock.ExpectQuery("SELECT id, name, email, phone FROM training_user").
+		WithArgs(userID).
+		WillReturnRows(rows)
 
-// 	// t.Log(user)
-// }
+	// Update Delete Insert
+	// mock.ExpectExec()
+
+	// mock.ExpectationsWereMet()
+
+	user, err := GetUserByID(userID)
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	if user.Email != "user.mock@gmail.com" {
+		t.Errorf("Test failed expect email %s but got %s", "user.mock@gmail.com", user.Email)
+	}
+
+	// t.Log(user)
+}
