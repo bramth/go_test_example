@@ -2,6 +2,11 @@ package user
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/jmoiron/sqlx"
 
@@ -22,24 +27,48 @@ func InitMock() {
 
 }
 
-// func TestGetUserMock(t *testing.T) {
-// 	InitMock()
-// 	userID := int64(20)
+func TestMain(m *testing.M) {
+	InitMock()
 
-// 	rows := sqlmock.NewRows([]string{"id", "name", "email", "phone"})
-// 	rows.AddRow(20, "User Test Mock", "user.mock@gmail.com", "+72303838388383")
+	os.Exit(m.Run())
+}
 
-// 	mock.ExpectQuery("SELECT id, name, email, phone FROM training_user").WithArgs(userID).WillReturnRows(rows)
+func TestGetUserMock(t *testing.T) {
+	tc := []struct {
+		user User
+		err  error
+	}{
+		{
+			user: User{
+				ID:    76,
+				Name:  "asdf",
+				Email: "a@gmail.com",
+				Phone: "56789",
+			},
+			err: nil,
+		},
+		{
+			user: User{},
+			err:  fmt.Errorf("err db"),
+		},
+	}
 
-// 	user, err := GetUserByID(userID)
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
+	for _, tt := range tc {
+		rows := sqlmock.NewRows([]string{"id", "name", "email", "phone"})
+		rows.AddRow(tt.user.ID, tt.user.Name, tt.user.Email, tt.user.Phone)
 
-// 	if user.Email != "user.mock@gmail.com" {
-// 		t.Errorf("Test failed expect email %s but got %s", "user.mock@gmail.com", user.Email)
-// 	}
+		mock.ExpectQuery("SELECT id, name, email, phone FROM training_user").WithArgs(tt.user.ID).WillReturnRows(rows).WillReturnError(tt.err)
 
-// 	// t.Log(user)
-// }
+		user, err := GetUserByID(tt.user.ID)
+		if err != tt.err {
+			t.Error(err.Error())
+		}
+
+		tempt := tt.user
+		if !assert.Equal(t, *user, tempt) {
+			t.Error("not equal")
+		}
+	}
+
+	// t.Log(user)
+}

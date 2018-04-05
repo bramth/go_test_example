@@ -9,7 +9,7 @@ const connectionDB = "user=postgres password=postgres dbname=se_training host=12
 
 var db *sqlx.DB
 
-func init() {
+func Init() {
 	var err error
 	db, err = sqlx.Connect("postgres", connectionDB)
 	if err != nil {
@@ -33,7 +33,7 @@ func GetUserByID(id int64) (*User, error) {
 
 	err := db.Get(&user, query, id)
 	if err != nil {
-		return nil, err
+		return &User{}, err
 	}
 
 	return &user, nil
