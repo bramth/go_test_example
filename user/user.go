@@ -1,6 +1,8 @@
 package user
 
 import (
+	"log"
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -9,7 +11,7 @@ const connectionDB = "user=postgres password=postgres dbname=se_training host=12
 
 var db *sqlx.DB
 
-func init() {
+func Init() {
 	var err error
 	db, err = sqlx.Connect("postgres", connectionDB)
 	if err != nil {
@@ -23,6 +25,20 @@ type User struct {
 	Name  string `db:"name"`
 	Email string `db:"email"`
 	Phone string `db:"phone"`
+}
+
+func DoSomething() error {
+	//validate
+
+	//get data
+	usr, err := GetUserByID(5)
+	if err != nil {
+		return err
+	}
+
+	//process data
+	log.Printf("%+v", usr)
+	return nil
 }
 
 // GetUserByID selects user by id

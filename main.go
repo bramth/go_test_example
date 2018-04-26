@@ -5,7 +5,13 @@ import (
 	"os"
 )
 
+// func callDB
+// func useCallDB
+
 func main() {
+	//do something1
+	//do something2
+
 	fmt.Println("Hello world")
 	os.Exit(0)
 }
